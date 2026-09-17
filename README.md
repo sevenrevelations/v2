@@ -1,79 +1,59 @@
 # blobby.vip
 
-A customizable browser-controller UI built for GitHub Pages and MIT App Inventor.
+A minimalist, highly customizable browser-controller homepage designed for GitHub Pages + MIT App Inventor.
 
-## What changed in this build
+## What changed in v6
 
-- App Inventor bridge using `window.AppInventor.setWebViewString()`
-- No iframe-based external browsing in the final app architecture
-- Desktop/GitHub demo mode with external-open fallback
-- Multi-tab UI with per-tab URL history and restore
-- Back, Forward, Refresh, Home, address/search bar
-- 19 built-in themes
-- Full custom theme editor for background, panels, text, accents, borders, and glow
-- Custom theme save, rename, duplicate, delete, export, and import
-- RGB mode with selectable RGB zones
-- Ambient effects: snow, rain, stars, particles, fireflies, floating orbs, aurora, fog, Matrix rain, bubbles, shooting stars, gradient waves, RGB glow, and dust
-- Rain lightning and glass ambience
-- Effect density, speed, opacity, and size controls
-- Performance mode
-- Solid, gradient, image URL, and uploaded-image backgrounds
-- 8 layout presets
-- Drag-and-drop layout edit mode
-- Saved layouts and layout lock
-- Homepage clock, favorites, recent pages, and desktop preview controls
-- Shortcut folders, icons, editing, and ordering
-- Search-engine selection
-- Customization profiles
-- Full settings export/import
-- Versioned localStorage state with migration from the older `blobby.v3` project
-- Mobile responsive settings and browser chrome
-- Keyboard shortcuts: `/` search, Ctrl/Cmd+L address bar, Ctrl/Cmd+T new tab, Ctrl/Cmd+W close tab
-- Reduced-motion support
+- Removed the web-based tab bar. Tabs are expected to be handled natively in MIT App Inventor.
+- Removed the duplicate homepage search box. There is now one omnibox for both searches and URLs.
+- Redesigned the interface around a cleaner minimalist visual system.
+- Rebuilt Layout Edit as a **12 × 12 snap grid**.
+- Every visible major block can be moved square-by-square.
+- Grid drops that would overlap another visible block are rejected.
+- Pointer/touch dragging and keyboard arrow nudging are supported in Grid Edit.
+- Existing v5 settings are migrated automatically.
+- Themes, custom colors, backgrounds, ambient effects, RGB mode, profiles, shortcuts, recent pages, Performance Mode, and imports/exports remain available.
 
-## Files
+## Layout blocks
 
-- `index.html` — application structure
-- `style.css` — responsive UI, themes, RGB styling, settings, layouts
-- `core.js` — state, URL handling, tabs, migration, persistence helpers
-- `themes.js` — theme presets and CSS-variable application
-- `browser-bridge.js` — MIT App Inventor WebViewString bridge
-- `effects.js` — canvas and CSS ambient effects engine
-- `layout.js` — layout presets and drag/drop ordering
-- `app.js` — browser UI, settings, profiles, shortcuts, navigation
-- `APP_INVENTOR_SETUP.md` — exact App Inventor integration instructions
-- `tests/check.cjs` — functional/static checks
+The movable grid currently includes:
 
-## GitHub Pages
+- Utility/settings controls
+- Search/navigation bar
+- blobby.vip title
+- Clock
+- Shortcuts
+- Recent pages
+- Desktop preview
 
-Keep `index.html` at repository root. In GitHub:
+Open **Settings → Layout → Edit grid layout**, or press the ⌘ button. Drag a block using its ✥ handle. Green cells are available; red cells are occupied/invalid. Save or cancel from the floating toolbar.
 
-1. Settings → Pages
-2. Source: Deploy from a branch
-3. Branch: `main`
-4. Folder: `/ (root)`
+The editor works with mouse, touch/pointer input, and arrow keys while a move handle is focused.
 
-Then use the generated GitHub Pages URL for `WebViewer_UI.HomeUrl` in App Inventor.
+## Customization
 
-## App Inventor
+The project keeps the full customization system:
 
-See **APP_INVENTOR_SETUP.md**.
+- 19+ preset themes
+- Custom color editor
+- Solid, gradient, URL, or uploaded backgrounds
+- Panel opacity, glass blur, radius, shadows
+- RGB logo/search/buttons/panels/ambient glow
+- Rain + lightning + rainy glass
+- Snow, stars, particles, fireflies, orbs, aurora, fog, Matrix rain, bubbles, shooting stars, waves, RGB glow, dust
+- Effect density, speed, opacity, size
+- Homepage visibility controls
+- Shortcut folders and reordering
+- Complete customization profiles
+- Saved grid layouts
+- Performance Mode and reduced motion
+- Settings/theme import and export
 
-The core idea is:
+## App Inventor architecture
 
-```text
-WebViewer_UI
-  GitHub-hosted blobby.vip controls
-        ↓ WebViewString commands
-App Inventor blocks
-        ↓
-WebViewer_Browser
-  actual external website
-```
+GitHub Pages hosts the UI only. External websites are loaded by App Inventor's real browser WebViewer rather than an iframe.
 
-## App Inventor commands
-
-blobby.vip can send:
+blobby.vip sends commands such as:
 
 ```text
 NAVIGATE|https://example.com/
@@ -81,29 +61,32 @@ BACK|https://previous.example/
 FORWARD|https://next.example/
 REFRESH
 HOME
-SHOW_HOME|tabId
-NEW_TAB|tabId
-CLOSE_TAB|tabId
-SWITCH_TAB|tabId
-CLOSE_OTHER_TABS|tabId
-OPEN_EXTERNAL|https://example.com/
 EXPAND_UI|settings
+EXPAND_UI|layout
 RESTORE_UI|browser
+RESTORE_UI|home
 ```
 
-App Inventor can send back to the UI by setting `WebViewer_UI.WebViewString`:
+Tabs are deliberately not sent or managed by the GitHub UI anymore. Your MIT App Inventor tab system can own the active WebViewer and send its current URL back with `URL|https://...`.
+
+See `APP_INVENTOR_SETUP.md` for the block logic.
+
+## Files
 
 ```text
-URL|https://example.com/page
-TITLE|Example Page
-HOME_SHOWN
-CONNECTED
+index.html
+style.css
+core.js
+themes.js
+effects.js
+layout.js
+browser-bridge.js
+app.js
+APP_INVENTOR_SETUP.md
+README.md
+tests/check.cjs
 ```
 
-## Local storage
+## GitHub Pages
 
-The app stores preferences under `blobby.v5`. Background uploads are limited to 2 MB to reduce the risk of exceeding browser localStorage limits.
-
-## Performance note
-
-Running many canvas effects, blur, RGB, animated gradients, and large background images at the same time can be expensive on a phone. Performance Mode keeps the selected settings saved but temporarily disables the heaviest rendering work.
+Upload the files directly to your repository root so `index.html` is visible immediately. Then use Settings → Pages → Deploy from a branch → main → / (root).
